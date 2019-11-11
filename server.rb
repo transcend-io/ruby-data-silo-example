@@ -73,6 +73,7 @@ post '/' do
         if $IS_A_FRAUD[coreIdentifier]
             dsr_status = 'ON_HOLD'
         elsif ! ($MOCK_DATA.key?(coreIdentifier))
+            status 204
             dsr_status = 'NOT_FOUND'
         else
             user = $MOCK_DATA[coreIdentifier]
