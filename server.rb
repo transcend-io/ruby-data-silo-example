@@ -67,7 +67,7 @@ post '/' do
     begin
         coreIdentifier = get_core_identifier token
         dsr_status = 'COMPILING'
-        puts coreIdentifier['value']
+        puts coreIdentifier['value'] # TODO
 
         if $IS_A_FRAUD[coreIdentifier]
             dsr_status = 'ON_HOLD'
