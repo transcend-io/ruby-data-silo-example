@@ -39,7 +39,7 @@ $PUBLIC_KEY_URL = $SOMBRA_URL + '/public-keys/sombra-general-signing-key'
 ########## ############### ###### ## #
 #    Mock Data
 $MOCK_DATA = {
-    19530621 => {
+    'john+brandless@transcend.io' => {
        :gpa => 3.89,
        :name => 'Freddie Mercury',
        :id => '19530621'
@@ -110,15 +110,18 @@ def perform_access(user, nonce)
         }],
     }
 
+    print nonce
+
     # Signal that it has been completed.
     resp = Faraday.post($DATA_SILO_PATH) do |req|
         req.headers['Content-Type'] = 'application/json'
         req.headers['accept'] = 'application/json'
-        req.headers['Authorization'] = $TRANSCEND_API_KEY
-        req.headers['x-sombra-authorization'] = $SOMBRA_API_KEY
+        req.headers['Authorization'] = 'Bearer ' + $TRANSCEND_API_KEY
+        req.headers['x-sombra-authorization'] = 'Bearer ' + $SOMBRA_API_KEY
         req.headers['x-transcend-nonce'] = nonce
         req.body = outgoing_request_body.to_json
     end
+
 end
 
 # Pretend to make erasure
@@ -134,8 +137,8 @@ def perform_erasure(user, nonce)
     resp = Faraday.post($DATA_SILO_PATH) do |req|
         req.headers['Content-Type'] = 'application/json'
         req.headers['accept'] = 'application/json'
-        req.headers['Authorization'] = $TRANSCEND_API_KEY
-        req.headers['x-sombra-authorization'] = $SOMBRA_API_KEY
+        req.headers['Authorization'] = 'Bearer ' + $TRANSCEND_API_KEY
+        req.headers['x-sombra-authorization'] = 'Bearer ' + $SOMBRA_API_KEY
         req.headers['x-transcend-nonce'] = nonce
         req.body = outgoing_request_body.to_json
     end
