@@ -129,6 +129,8 @@ def perform_erasure(user, nonce)
         "profiles": [{
             "profileId": user['id'],
         }],
+        # Indicate that there is no further data being posted
+        "status": "READY"
     }
 
     # Signal that it has been completed.
