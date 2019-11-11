@@ -110,8 +110,6 @@ def perform_access(user, nonce)
         }],
     }
 
-    print nonce
-
     # Signal that it has been completed.
     resp = Faraday.post($DATA_SILO_PATH) do |req|
         req.headers['Content-Type'] = 'application/json'
