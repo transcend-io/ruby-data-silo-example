@@ -2,6 +2,7 @@ require 'faraday'
 require 'sinatra'
 require 'jwt'
 require 'dotenv'
+
 Dotenv.load
 
 ########## ############### ###### ## #
@@ -67,7 +68,7 @@ post '/' do
     begin
         coreIdentifier = get_core_identifier token
         dsr_status = 'COMPILING'
-        puts coreIdentifier['value'] # TODO
+
 
         if $IS_A_FRAUD[coreIdentifier]
             dsr_status = 'ON_HOLD'
@@ -150,5 +151,5 @@ def get_core_identifier(token)
     # A JWT that encodes the coreIdentifier like `{ "value": "12345" }`
     options = { aud: $JWT_AUDIENCE, verify_aud: true, algorithm: 'ES384' }
     decoded_token = JWT.decode token, transcend_public_key, $VERIFY_JWT, options
-    decoded_token
+    decoded_token[0]['value']
 end
