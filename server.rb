@@ -1,26 +1,30 @@
 require 'faraday'
 require 'sinatra'
 require 'jwt'
+require 'dotenv'
+Dotenv.load
 
 ########## ############### ###### ## #
 #   Constants
 
 # The API to post to Transcend THIS IS A SECRET, STORE SAFELY AND CYCLE REGULARLY
-$TRANSCEND_API_KEY = 'API KEY'
+# This is a secret!!!
+$TRANSCEND_API_KEY = ENV["TRANSCEND_API_KEY"]
 
 # The API to use with the sombra instance that encrypts the data before hitting Transcends servers THIS IS A SECRET, STORE SAFELY AND CYCLE REGULARLY
-$SOMBRA_API_KEY = 'SOMBRA KEY'
+# This is a secret!!!
+$SOMBRA_API_KEY = ENV["SOMBRA_API_KEY"]
 
 # The url of the sombra instance
-$SOMBRA_URL = 'SOMBRA URL'
+$SOMBRA_URL = ENV["SOMBRA_URL"]
 
 # The JWT audience
-$JWT_AUDIENCE="TENANT NAME"
+$JWT_AUDIENCE=ENV["JWT_AUDIENCE"]
 
-# Whether to verify the JWT from Transcend, set to False to trust the JWT always
+# Whether to verify the JWT from Transcend, set to False to trust the JWT always -- in production you should always verify the JWT
 $VERIFY_JWT = true
 
-# Whether to trust self signed certs
+# Whether to trust self signed certs -- in production you should always check the cert
 $TRUST_SELF_SIGNED_CERT = false
 
 ########## ############### ###### ## #
@@ -63,6 +67,7 @@ post '/' do
     begin
         coreIdentifier = get_core_identifier token
         dsr_status = 'COMPILING'
+        puts coreIdentifier['value']
 
         if $IS_A_FRAUD[coreIdentifier]
             dsr_status = 'ON_HOLD'
@@ -70,16 +75,15 @@ post '/' do
             dsr_status = 'NOT_FOUND'
         else
             user = $MOCK_DATA[coreIdentifier]
-        end
-
-        case payload['type']
-        when 'ACCESS'
-            perform_access(user, nonce)
-        when 'ERASURE'
-            perform_erasure(user, nonce)
-        else
-            status 400
-            'Unknown DSR Request Type'
+            case payload['type']
+            when 'ACCESS'
+                perform_access(user, nonce)
+            when 'ERASURE'
+                perform_erasure(user, nonce)
+            else
+                status 400
+                'Unknown DSR Request Type'
+            end
         end
 
     rescue JWT::JWKError, JWT::DecodeError, JWT::InvalidAudError
@@ -87,7 +91,7 @@ post '/' do
         dsr_status = 'Unauthorized'
     end
 
-    { 'status': dsr_status, 'data': payload}.to_json
+    { 'status': dsr_status}.to_json
 end
 
 
