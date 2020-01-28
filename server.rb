@@ -134,7 +134,7 @@ def perform_erasure(user, nonce)
     }
 
     # Signal that it has been completed.
-    resp = Faraday.post($DATA_SILO_PATH) do |req|
+    resp = Faraday.put($DATA_SILO_PATH) do |req|
         req.headers['Content-Type'] = 'application/json'
         req.headers['accept'] = 'application/json'
         req.headers['Authorization'] = 'Bearer ' + $TRANSCEND_API_KEY
